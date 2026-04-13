@@ -11,5 +11,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Welcome to the Task Manager API!");
 });
+import router from "./routes/index";
 
-export default app;
+app.use("/api/", router);
+
+export default app; 
