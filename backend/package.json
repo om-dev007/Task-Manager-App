@@ -21,14 +21,17 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.4.1",
     "morgan": "^1.10.1",
+    "nodemailer": "^8.0.5",
     "nodemon": "^3.1.14",
     "typescript": "^6.0.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
+    "@types/nodemailer": "^8.0.0",
     "@types/typescript": "^0.4.29"
   }
 }
