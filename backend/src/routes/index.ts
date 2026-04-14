@@ -12,5 +12,9 @@ import projectRouter from "./project.routes";
 
 router.use("/project/", projectRouter);
 
+import taskRouter from "./task.routes";
+
+router.use("/task/", taskRouter);
+
 
 export default router;

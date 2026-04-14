@@ -4,10 +4,10 @@ interface ITask {
     id?: string;
     title: string;
     description: string;
-    status: "pending" | "in-progress" | "completed";
+    status?: "pending" | "in-progress" | "completed";
     projectId: any;
     userId: any;
-    completed: boolean;
+    completed?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
