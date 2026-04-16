@@ -74,3 +74,102 @@ export const getOneTaskController = async (req: Request, res: Response) => {
         return res.status(500).json({ success: false, message: error.message || "Failed to get task" } as IResponse);
     }
 }
+
+export const updateTaskController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { title, description } = req.body;
+        const userId = (req as any).userId;
+
+        if (!title && !description) {
+            return res.status(400).json({ success: false, message: "At least one of title or description is required to update" } as IResponse);
+        }
+
+        const updatedTask = await taskModel.findOneAndUpdate(
+            { _id: id, userId },
+            { $set: { title, description } },
+            { new: true }
+        );
+
+        if (!updatedTask) {
+            return res.status(404).json({ success: false, message: "Task not found or not authorized to update" } as IResponse);
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Task updated successfully",
+            data: updatedTask
+        } as IResponse);
+    }
+    catch (error: any) {
+        console.error("Error in updateTaskController:", error.message);
+        return res.status(500).json({ success: false, message: error.message || "Failed to update task" } as IResponse);
+    }
+}
+
+export const deleteTaskController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const userId = (req as any).userId;
+
+        const deletedTask = await taskModel.findOneAndDelete({ _id: id, userId });
+
+        if (!deletedTask) {
+            return res.status(404).json({ success: false, message: "Task not found or not authorized to delete" } as IResponse);
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Task deleted successfully",
+            data: deletedTask
+        } as IResponse);
+    }
+    catch (error: any) {
+        console.error("Error in deleteTaskController:", error.message);
+        return res.status(500).json({ success: false, message: error.message || "Failed to delete task" } as IResponse);
+    }
+}
+
+export const toggleTaskSuccessController = async (req: Request, res: Response) => {
+    try {
+        const {id} = req.params;
+
+        const userId = (req as any).userId
+
+        const {status} = req.body;
+
+        if(status !== "completed" && status !== "in-progress" && status !== "pending") {
+            return res.status(403).json({
+                success: false,
+                message: "Please enter valid status you can enter completed or in-progress or pending"
+            } as IResponse)
+        }
+
+        const task = await taskModel.findOne({_id: id, userId}) as any
+
+        if(!task) {
+            return res.status(500).json({
+                success: false,
+                message: "Task not found with this id"
+            } as IResponse)
+        }
+ 
+        task.status = status
+        await task?.save()
+
+        return res.status(200).json({
+            success: true,
+            message: "Task toggled successfully",
+            data: task
+        } as IResponse)
+
+
+    }
+    catch (error: any) {
+        console.log(error.message)
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Internal server error"
+        } as IResponse)
+    }
+}

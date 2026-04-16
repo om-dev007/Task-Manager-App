@@ -7,7 +7,6 @@ interface ITask {
     status?: "pending" | "in-progress" | "completed";
     projectId: any;
     userId: any;
-    completed?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -28,9 +27,6 @@ const taskSchema = new Schema<ITask>(
         userId: {
             type: Schema.Types.ObjectId,
             ref: "User", required: true, trim: true
-        },
-        completed: {
-            type: Boolean, default: false 
         },
     },
     { timestamps: true }

@@ -16,5 +16,8 @@ import taskRouter from "./task.routes";
 
 router.use("/task/", taskRouter);
 
+import statsRoutes from "./stats.routes";
+
+router.use("/stats", statsRoutes)
 
 export default router;
