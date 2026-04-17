@@ -6,8 +6,6 @@ export const registerService = async (name: string, email: string, password: str
 
     try {
 
-        // Check if user already exists
-
         const existingUser: any = await UserModel.findOne({ email });
 
         if (existingUser) {
@@ -27,7 +25,6 @@ export const registerService = async (name: string, email: string, password: str
 
         const hashPass = await hashPassword(password);
 
-        // Create new user
         const newUser = await UserModel.create({ name, email, password: hashPass });
 
         return { success: true, message: "User registered successfully", data: newUser } as IResponse

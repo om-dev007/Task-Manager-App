@@ -7,6 +7,6 @@ export const sendOtpEmail = async (email: string, otp: string) => {
     from: `"Your App" <${config.userEmail}>`,
     to: email,
     subject: "Your OTP Code",
-    html: otpEmailTemplate(otp)   // 🔥 yaha use ho raha hai
+    html: otpEmailTemplate(otp) 
   });
 };
