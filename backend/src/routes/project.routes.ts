@@ -4,10 +4,11 @@ const projectRouter = Router();
 
 import { createProjectController, deleteProjectController, getAllProjectsController, updateProjectController, getOneProjectController } from "../controllers/project.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { validateCreateProject, validateUpdateProject } from "../middleware/validateProject.middleware";
 
 // Create project route
 
-projectRouter.post("/create", authMiddleware, createProjectController);
+projectRouter.post("/create", authMiddleware, validateCreateProject ,createProjectController);
 
 // Get all project route
 
@@ -19,7 +20,7 @@ projectRouter.get("/get/:id", authMiddleware, getOneProjectController);
 
 // Update project route
 
-projectRouter.patch("/update/:id", authMiddleware, updateProjectController);
+projectRouter.patch("/update/:id", authMiddleware, validateUpdateProject ,updateProjectController);
 
 // Delete project route
 
