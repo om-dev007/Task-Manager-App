@@ -261,6 +261,23 @@ export const generateNewTokenController = async (req: Request, res: Response) =>
       { expiresIn: "15m" }
     );
 
+    const newRefreshToken = jwt.sign(
+      { userId: user._id, sessionId: session._id },
+      config.jwtSecret,
+      { expiresIn: "7d" }
+    );
+
+    const hashedRefreshToken = await hashPassword(newRefreshToken);
+
+    session.token = hashedRefreshToken;
+    await session.save();
+
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+
     return res.status(200).json({
       success: true,
       message: "New access token generated successfully",
