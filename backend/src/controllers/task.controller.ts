@@ -200,7 +200,7 @@ export const filterTasksBySuccessStatusController = async (
     if (!projectId) {
       const allTasks = await taskModel.aggregate([
         {
-          $match: { userId: new mongoose.Types.ObjectId(userId as any) },
+          $match: { userId: new mongoose.Types.ObjectId(userId as any), status },
         },
         {
           $project: {
@@ -290,7 +290,7 @@ export const filterTasksByLatestCreatedTaskController = async (
 
       return res.status(200).json({
         success: true,
-        message: "Task found by globally",
+        message: "Latest tasks created found by globally",
         data: tasks,
       } as IResponse);
     }
@@ -310,6 +310,58 @@ export const filterTasksByLatestCreatedTaskController = async (
     return res.status(200).json({
       success: true,
       message: "Tasks found by lastest created",
+      data: tasks,
+    } as IResponse);
+  } catch (error: any) {
+    console.error(error.message);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    } as IResponse);
+  }
+};
+
+export const filterTasksByLatestUpdatedTaskController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const { projectId } = req.query;
+
+    const userId = (req as any).userId;
+
+    if (!projectId) {
+      const tasks = await taskModel.aggregate([
+        {
+          $match: { userId: new mongoose.Types.ObjectId(userId) },
+        },
+        {
+          $sort: { updatedAt: -1 },
+        },
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        message: "Latest tasks found by globally",
+        data: tasks,
+      } as IResponse);
+    }
+
+    const tasks = await taskModel.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId),
+          projectId: new mongoose.Types.ObjectId(projectId as any),
+        },
+      },
+      {
+        $sort: { updatedAt: -1 },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Tasks found by lastest updated",
       data: tasks,
     } as IResponse);
   } catch (error: any) {

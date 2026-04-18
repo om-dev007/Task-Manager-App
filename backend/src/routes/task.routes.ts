@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { createTaskController, deleteTaskController, filterTasksBySuccessStatusController, getAllTasksController, getOneTaskController, toggleTaskSuccessController, updateTaskController } from "../controllers/task.controller";
+import { createTaskController, deleteTaskController, filterTasksByLatestCreatedTaskController, filterTasksByLatestUpdatedTaskController, filterTasksBySuccessStatusController, getAllTasksController, getOneTaskController, toggleTaskSuccessController, updateTaskController } from "../controllers/task.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { validateCreateTask, validateUpdateTask, validateStatus } from "../middleware/validateTasks.middleware";
 
@@ -32,6 +32,14 @@ taskRouter.patch("/update-status/:id", authMiddleware, validateStatus ,toggleTas
 // Find tasks by success status
 
 taskRouter.get("/get-tasks-success/", authMiddleware, filterTasksBySuccessStatusController)
+
+// Find tasks by latest created task
+
+taskRouter.get("/latest-created-tasks/", authMiddleware, filterTasksByLatestCreatedTaskController)
+
+// Find tasks by latest updated task
+
+taskRouter.get("/latest-updated-tasks/", authMiddleware, filterTasksByLatestUpdatedTaskController)
 
 
 export default taskRouter;
