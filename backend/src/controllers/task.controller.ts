@@ -8,15 +8,6 @@ export const createTaskController = async (req: Request, res: Response) => {
     const { title, description, projectId } = req.body;
     const userId = (req as any).userId;
 
-    if (!title || !description || !projectId) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Title, description and projectId are required",
-        } as IResponse);
-    }
-
     const newTask = await taskModel.create({
       title,
       description,
@@ -31,12 +22,10 @@ export const createTaskController = async (req: Request, res: Response) => {
     } as IResponse);
   } catch (error: any) {
     console.error("Error in createTaskController:", error.message);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Failed to create task",
-      } as IResponse);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to create task",
+    } as IResponse);
   }
 };
 
@@ -46,23 +35,19 @@ export const getAllTasksController = async (req: Request, res: Response) => {
     const { projectId } = req.query;
 
     if (!projectId) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "ProjectId is required",
-        } as IResponse);
+      return res.status(400).json({
+        success: false,
+        message: "ProjectId is required",
+      } as IResponse);
     }
 
     const tasks = await taskModel.find({ userId, projectId });
 
     if (tasks.length === 0) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "No tasks found for this project",
-        } as IResponse);
+      return res.status(404).json({
+        success: false,
+        message: "No tasks found for this project",
+      } as IResponse);
     }
 
     return res.status(200).json({
@@ -72,12 +57,10 @@ export const getAllTasksController = async (req: Request, res: Response) => {
     } as IResponse);
   } catch (error: any) {
     console.error("Error in getAllTasksController:", error.message);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Failed to get tasks",
-      } as IResponse);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to get tasks",
+    } as IResponse);
   }
 };
 
@@ -101,12 +84,10 @@ export const getOneTaskController = async (req: Request, res: Response) => {
     } as IResponse);
   } catch (error: any) {
     console.error("Error in getOneTaskController:", error.message);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Failed to get task",
-      } as IResponse);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to get task",
+    } as IResponse);
   }
 };
 
@@ -116,15 +97,6 @@ export const updateTaskController = async (req: Request, res: Response) => {
     const { title, description } = req.body;
     const userId = (req as any).userId;
 
-    if (!title && !description) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "At least one of title or description is required to update",
-        } as IResponse);
-    }
-
     const updatedTask = await taskModel.findOneAndUpdate(
       { _id: id, userId },
       { $set: { title, description } },
@@ -132,12 +104,10 @@ export const updateTaskController = async (req: Request, res: Response) => {
     );
 
     if (!updatedTask) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Task not found or not authorized to update",
-        } as IResponse);
+      return res.status(404).json({
+        success: false,
+        message: "Task not found or not authorized to update",
+      } as IResponse);
     }
 
     return res.status(200).json({
@@ -147,12 +117,10 @@ export const updateTaskController = async (req: Request, res: Response) => {
     } as IResponse);
   } catch (error: any) {
     console.error("Error in updateTaskController:", error.message);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Failed to update task",
-      } as IResponse);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update task",
+    } as IResponse);
   }
 };
 
@@ -164,12 +132,10 @@ export const deleteTaskController = async (req: Request, res: Response) => {
     const deletedTask = await taskModel.findOneAndDelete({ _id: id, userId });
 
     if (!deletedTask) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Task not found or not authorized to delete",
-        } as IResponse);
+      return res.status(404).json({
+        success: false,
+        message: "Task not found or not authorized to delete",
+      } as IResponse);
     }
 
     return res.status(200).json({
@@ -179,12 +145,10 @@ export const deleteTaskController = async (req: Request, res: Response) => {
     } as IResponse);
   } catch (error: any) {
     console.error("Error in deleteTaskController:", error.message);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Failed to delete task",
-      } as IResponse);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to delete task",
+    } as IResponse);
   }
 };
 
@@ -199,22 +163,10 @@ export const toggleTaskSuccessController = async (
 
     const { status } = req.body;
 
-    if (
-      status !== "completed" &&
-      status !== "in-progress" &&
-      status !== "pending"
-    ) {
-      return res.status(403).json({
-        success: false,
-        message:
-          "Please enter valid status you can enter completed or in-progress or pending",
-      } as IResponse);
-    }
-
     const task = (await taskModel.findOne({ _id: id, userId })) as any;
 
     if (!task) {
-      return res.status(500).json({
+      return res.status(404).json({
         success: false,
         message: "Task not found with this id",
       } as IResponse);
@@ -265,7 +217,7 @@ export const filterTasksBySuccessStatusController = async (
       return res.status(200).json({
         success: true,
         message: "All tasks is found successfully",
-        data: allTasks
+        data: allTasks,
       });
     }
 
@@ -314,5 +266,57 @@ export const filterTasksBySuccessStatusController = async (
       success: false,
       message: error.message || "Internal server error",
     });
+  }
+};
+
+export const filterTasksByLatestCreatedTaskController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const { projectId } = req.query;
+
+    const userId = (req as any).userId;
+
+    if (!projectId) {
+      const tasks = await taskModel.aggregate([
+        {
+          $match: { userId: new mongoose.Types.ObjectId(userId) },
+        },
+        {
+          $sort: { createdAt: -1 },
+        },
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        message: "Task found by globally",
+        data: tasks,
+      } as IResponse);
+    }
+
+    const tasks = await taskModel.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId),
+          projectId: new mongoose.Types.ObjectId(projectId as any),
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Tasks found by lastest created",
+      data: tasks,
+    } as IResponse);
+  } catch (error: any) {
+    console.error(error.message);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    } as IResponse);
   }
 };

@@ -1,12 +1,13 @@
 import {Router} from "express";
 import { createTaskController, deleteTaskController, filterTasksBySuccessStatusController, getAllTasksController, getOneTaskController, toggleTaskSuccessController, updateTaskController } from "../controllers/task.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { validateCreateTask, validateUpdateTask, validateStatus } from "../middleware/validateTasks.middleware";
 
 const taskRouter = Router();
 
 // Create task route
 
-taskRouter.post("/create", authMiddleware, createTaskController);
+taskRouter.post("/create", authMiddleware, validateCreateTask, createTaskController);
 
 // Get all task route
 
@@ -18,7 +19,7 @@ taskRouter.get("/get-one/:id", authMiddleware, getOneTaskController)
 
 // Update task route 
 
-taskRouter.patch("/update/:id", authMiddleware, updateTaskController)
+taskRouter.patch("/update/:id", authMiddleware, validateUpdateTask ,updateTaskController)
 
 // Delete task route
 
@@ -26,7 +27,7 @@ taskRouter.delete("/delete/:id", authMiddleware, deleteTaskController)
 
 // Update task status route
 
-taskRouter.patch("/update-status/:id", authMiddleware, toggleTaskSuccessController)
+taskRouter.patch("/update-status/:id", authMiddleware, validateStatus ,toggleTaskSuccessController)
 
 // Find tasks by success status
 
